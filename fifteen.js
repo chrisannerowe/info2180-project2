@@ -1,4 +1,6 @@
 function main({
-    $('.puzzlepiece').fadeIn(400);
+    $('.shufflebutton').on('click', function(){
+        
+    });
     
 })
