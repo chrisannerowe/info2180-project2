@@ -17,7 +17,7 @@ function arrangeTiles(area) {
                 area[cursor].style.backgroundPositionY = "" + bg_offset_top + "px";
                 bg_offset_left -= 98;
                 
-                area[cursor].on("click", MoveRight);
+                area[cursor].addEventListener("click", MoveRight);
                 cursor++; 
             }
            
