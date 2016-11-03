@@ -105,7 +105,7 @@ function SetMovable(point_x, point_y) {
 $(document).ready(function(){
     var puzzle = $("#puzzlearea").children();
     puzzle.addClass("puzzlepiece"); 
-    //puzzle.addClass("movablepiece");
+    puzzle.addClass("movablepiece");
     Arrange(puzzle);
     
 
