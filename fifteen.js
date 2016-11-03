@@ -1,112 +1,139 @@
-function Arrange(area) {
-    var offset_left = 0, offset_top = 0, cursor = 0,
-        bg_offset_left = 0, bg_offset_top = 0;
+/* global $ */
+/**
+ *  ID Number:      620067672
+ *  Extra feature:  Animations and/or transitions (piece slides in place)
+ *
+ */
+ 
+window.onload = function(){
+
+   // var puzzlearea=  $('#puzzlearea');
+    var puzzlepieces = document.querySelectorAll("#puzzlearea div"); // to select all puzzle pieces
     
-    for (var i=0; i<4; i++) {
-        for(var j=0; j< 4; j++) {
-            //Arranges tiles by colums
-            if (cursor < area.length) {
-                area[cursor].style.left = "" + offset_left + "px";
-                area[cursor].style.top = "" + offset_top + "px";
-                offset_left += 99;
-                
-                // Arrange Background position
-                area[cursor].style.backgroundPositionX = "" + bg_offset_left + "px";
-                area[cursor].style.backgroundPositionY = "" + bg_offset_top + "px";
-                bg_offset_left -= 99;
-                
-                area[cursor].addEventListener("click", Direction);
-                cursor++; // Updates the cursor
+      
+        var xpos=0; 
+        var ypos= 0;
+    for(var i=0; i < puzzlepieces.length; i++){  // set layout of tiles
+       
+        puzzlepieces[i].setAttribute("class", "puzzlepiece") ;
+        puzzlepieces[i].style.left= xpos + 'px';
+        puzzlepieces[i].style.top= ypos + 'px';
+        puzzlepieces[i].style.backgroundPosition= "-" + xpos + "px " + "-" + ypos + "px";
+        if (xpos < 300){
+          xpos+=100;
+        }
+        else
+        {
+            xpos=0;
+            ypos+=100;
+        }
+    }
+    
+    var BLANKTOP= "300px";
+    var BLANKLEFT= "300px";
+    var BLOCKTOP, BLOCKLEFT; 
+    
+    var shufflebutton= document.getElementById('shufflebutton');
+    shufflebutton.addEventListener("click", shuffle);
+     for(var i=0; i < puzzlepieces.length; i++){
+         
+          (function(index) {
+              
+            puzzlepieces[index].addEventListener("mouseover", function(){
+            validMove(this);
+            });
+            
+            puzzlepieces[index].addEventListener("click", function(){
+            if (validMove(this)){
+                     move(puzzlepieces[index]); 
             }
-            // Does nothing if out of array count
-        }
-        // Changes top offset to arrange next row
-        offset_left = 0;
-        offset_top += 99;
-        bg_offset_left = 0;
-        bg_offset_top -= 99;
+            });
+            
+            puzzlepieces[index].addEventListener("mouseout", function(){
+                       this.setAttribute("class", "puzzlepiece");
+            });
+          })(i);
+          
+     }
+     
+     /**
+      * FUNCTION move: Moves the clicked puzzlepiece to the blank space
+      *                Implements the slide animation
+      */
+    
+    
+    function move(puzzlepiece){
+            BLOCKTOP=puzzlepiece.offsetTop;
+            BLOCKLEFT=puzzlepiece.offsetLeft;
+            
+            
+            puzzlepiece.setAttribute("id", "selected");
+            $('#selected').animate(
+                    {backgroundImage: "url(background.jpg)",
+                	border: "2px solid black",
+                	height: "96px",
+                	lineHeight: "96px",
+                	position: "absolute",
+                	textAlign: "center",
+                	verticalAlign: "middle",
+                	width: "96px",
+                    left: BLANKLEFT,
+                    top: BLANKTOP
+                    
+                    });
+                  
+           
+              puzzlepiece.style.top = BLANKTOP;
+              puzzlepiece.style.left = BLANKLEFT;
+              BLANKTOP= BLOCKTOP + "px";
+              BLANKLEFT=BLOCKLEFT + "px";
+              puzzlepiece.removeAttribute("id");
+              
+             
+          
     }
+          
     
-}
-
-function Direction() {
-    var point_x = parseInt(this.style.left),
-        point_y = parseInt(this.style.top),
-        search_x, search_y,
-        moveUp = true, moveDown = true,
-        moveLeft = true, moveRight = true,
-        area = $("#puzzlearea").children();
+    /**
+     * FUNCTION validMove : checks that the black space is beside the chosen puzzlepiece before sliding 
+     *
+     */
     
-    for (var i=0; i< area.length; i++) {
-        search_x = parseInt(area[i].style.left);
-        search_y = parseInt(area[i].style.top);
+    
+    function validMove(puzzlepiece){
+                BLOCKTOP=puzzlepiece.offsetTop;
+                BLOCKLEFT= puzzlepiece.offsetLeft;
+                var top= BLOCKTOP + "px";
+                var left= BLOCKLEFT + "px";
+               
+                var testleft= Math.abs(parseInt(left) - parseInt(BLANKLEFT));
+                if (top == BLANKTOP && testleft==100){
+                        puzzlepiece.setAttribute("class", "puzzlepiece movablepiece");
+                        return true;
+                      
+                       }
+                        
+                var testright= Math.abs(parseInt(top) - parseInt(BLANKTOP));
+                if (left == BLANKLEFT && testright==100){
+                        puzzlepiece.setAttribute("class", "puzzlepiece movablepiece");
+                        return true;
+                       
+                       }
         
-        if (search_x == point_x && search_y == point_y - 99) {
-            moveUp = false;
-        }
-        else if (search_x == point_x && search_y == point_y + 99) {
-            moveDown = false;
-        }
-        else if (search_x == point_x - 99 && search_y == point_y) {
-            moveLeft = false;
-        }
-        else if (search_x == point_x + 99 && search_y == point_y) {
-            moveRight = false;
+    }
+    /**
+     * FUNCTION shuffle: creates a shuffles by moving a random puzzle piece to the blank space 100 times
+     *
+     */
+    
+    function shuffle(){
+        var choice;
+        for (var i=0; i<100; i++){ 
+                choice=  Math.floor(Math.random() * 15);
+                move(puzzlepieces[choice]);
         }
         
+       
     }
     
-    // Check for edges
-    if (point_x == 0) {
-        moveLeft = false;
-    }
-    if (point_x == 99*3) {
-        moveRight = false;
-    }
-    if (point_y == 0) {
-        moveUp = false;
-    }
-    if (point_y == 99*3) {
-        moveDown = false;
-    }
-    
-    //Move tile
-    if (moveDown) {
-        var p_top = parseInt(this.style.top);
-        this.style.top = "" + (p_top + 99) + "px";
-    }
-    else if (moveUp) {
-        var p_top = parseInt(this.style.top);
-        this.style.top = "" + (p_top - 99) + "px"; 
-    }
-    else if (moveLeft) {
-        var p_top = parseInt(this.style.left);
-        this.style.left = "" + (p_top - 99) + "px";
-    }
-    else if (moveRight) {
-        var p_top = parseInt(this.style.left);
-        this.style.left = "" + (p_top + 99) + "px";
-    }
-    
-}
-
-function SetMovable(point_x, point_y) {  
-    var search_x, search_y,
-        area = $("#puzzlearea").children();
-    for (var i = 0; i < area.length; i++) {
-        search_x = parseInt(area[i].style.left);
-        search_y = parseInt(area[i].style.top);
-        
-        if (search_x == point_x && search_y == point_y)
-            area[i].addClass("movablepiece");
-    }
-}
-
-$(document).ready(function(){
-    var puzzle = $("#puzzlearea").children();
-    puzzle.addClass("puzzlepiece"); 
-    puzzle.addClass("movablepiece");
-    Arrange(puzzle);
-    
-
-});
+};
