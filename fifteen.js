@@ -1,13 +1,13 @@
 /* global $ */
 /**
- *  ID Number:      620067672
- *  Extra feature:  Animations and/or transitions (piece slides in place)
+ *  ID Number:      620078010
+ *  Chris-Anne Rowe
  *
  */
  
 window.onload = function(){
 
-   // var puzzlearea=  $('#puzzlearea');
+   
     var puzzlepieces = document.querySelectorAll("#puzzlearea div"); // to select all puzzle pieces
     
       
@@ -56,12 +56,7 @@ window.onload = function(){
           
      }
      
-     /**
-      * FUNCTION move: Moves the clicked puzzlepiece to the blank space
-      *                Implements the slide animation
-      */
-    
-    
+     
     function move(puzzlepiece){
             BLOCKTOP=puzzlepiece.offsetTop;
             BLOCKLEFT=puzzlepiece.offsetLeft;
@@ -94,12 +89,6 @@ window.onload = function(){
     }
           
     
-    /**
-     * FUNCTION validMove : checks that the black space is beside the chosen puzzlepiece before sliding 
-     *
-     */
-    
-    
     function validMove(puzzlepiece){
                 BLOCKTOP=puzzlepiece.offsetTop;
                 BLOCKLEFT= puzzlepiece.offsetLeft;
@@ -121,10 +110,6 @@ window.onload = function(){
                        }
         
     }
-    /**
-     * FUNCTION shuffle: creates a shuffles by moving a random puzzle piece to the blank space 100 times
-     *
-     */
     
     function shuffle(){
         var choice;
